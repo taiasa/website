@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduGame Hub | 先生が作った学習ゲーム図鑑</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;900&display=swap');
+        
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* スタイリッシュな背景装飾 */
+        .bg-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(45, 212, 191, 0.2) 100%);
+            filter: blur(80px);
+            border-radius: 50%;
+            animation: move 20s infinite alternate;
+        }
+
+        .blob-2 {
+            top: 40%;
+            right: -10%;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(244, 63, 94, 0.15) 100%);
+            animation-duration: 25s;
+        }
+
+        @keyframes move {
+            from { transform: translate(-10%, -10%); }
+            to { transform: translate(10%, 10%); }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+        }
+
+        .hero-title {
+            font-weight: 900;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+
+        .emphasis-text {
+            background: linear-gradient(120deg, #3b82f6, #2dd4bf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            position: relative;
+        }
+
+        .emphasis-text::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: rgba(59, 130, 246, 0.1);
+            z-index: -1;
+        }
+
+        .tag-active {
+            background-color: #0f172a !important;
+            color: white !important;
+            border-color: #0f172a !important;
+        }
+
+        .filter-btn {
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover:not(.tag-active) {
+            background-color: #f1f5f9;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="text-slate-900">
+
+    <div class="bg-decoration">
+        <div class="blob"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="h-20 flex items-center justify-center border-b border-white/20 backdrop-blur-sm sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <div class="bg-slate-900 p-2 rounded-xl text-white shadow-lg shadow-blue-500/20">
+                <i class="fas fa-gamepad text-xl"></i>
+            </div>
+            <span class="text-2xl font-black tracking-tighter">EduGame Hub</span>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="max-w-7xl mx-auto px-6 py-20 text-center">
+        <div class="inline-block px-4 py-1.5 mb-6 rounded-full bg-blue-50 text-blue-600 text-xs font-bold tracking-widest uppercase border border-blue-100">
+            "Keep challenging yourself"
+        </div>
+        <h1 class="hero-title text-5xl md:text-6xl mb-8">
+            <span class="emphasis-text">「もっとやりたい！」</span><br>
+            が授業を熱くする。
+        </h1>
+        <p class="text-slate-500 text-lg md:text-xl max-w-2xl mx-auto mb-12 font-medium">
+            現役の小学校教員が趣味と実益を兼ねて開発した、<br class="hidden md:block">
+            遊びと学びが融合するゲーミフィケーション・ライブラリ。
+        </p>
+
+        <!-- Search & Filter Area -->
+        <div class="max-w-4xl mx-auto space-y-8">
+            <div class="relative group">
+                <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"></i>
+                <input type="text" id="searchInput" placeholder="探したい教科やキーワードを入力..." class="w-full pl-16 pr-8 py-5 bg-white shadow-2xl shadow-slate-200/50 border-none rounded-3xl focus:ring-4 focus:ring-blue-500/10 transition-all outline-none text-lg">
+            </div>
+            
+            <div class="flex flex-wrap gap-3 justify-center">
+                <button onclick="filterContent('all')" class="filter-btn tag-active px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">ALL</button>
+                <button onclick="filterContent('国語')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">国語</button>
+                <button onclick="filterContent('算数')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">算数</button>
+                <button onclick="filterContent('理科')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">理科</button>
+                <button onclick="filterContent('社会')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">社会</button>
+                <button onclick="filterContent('英語')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">英語</button>
+                <button onclick="filterContent('学級経営')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">学級経営</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 pb-32">
+        <div id="gameGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            <!-- Cards will be injected by JavaScript -->
+        </div>
+        
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-32">
+            <div class="bg-slate-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-ghost text-4xl text-slate-300"></i>
+            </div>
+            <p class="text-slate-400 font-bold text-xl">該当するアプリが見つかりません</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-20 bg-slate-900 text-white rounded-t-[3rem]">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div class="flex items-center justify-center gap-3 mb-8 opacity-50">
+                <i class="fas fa-gamepad text-2xl"></i>
+                <span class="text-xl font-black tracking-tighter">EduGame Hub</span>
+            </div>
+            <p class="text-slate-400 text-sm font-medium">© 2024 EduGame Hub. Crafted with passion by an Educator.</p>
+        </div>
+    </footer>
+
+    <script>
+        const games = [
+            {
+                id: 1,
+                title: "プライムスマッシャー",
+                subject: "算数",
+                target: "約数、素数、素因数分解（中学）",
+                description: "出てきた数を素数でわり切れ！気づけば中学の素因数分解につながる学びに！",
+                icon: "fa-calculator",
+                color: "emerald",
+                url: "https://taiasa.github.io/gamification_test1/prime_smasher"
+            },
+            {
+                id: 2,
+                title: "パイチャレンジ（円周率暗記ゲー）",
+                subject: "算数",
+                target: "円周率、暗記",
+                description: "あなたは円周率を何桁まで言えますか？目指せ１００桁マスター！",
+                icon: "fa-calculator",
+                color: "emerald",
+                url: "https://taiasa.github.io/gamification_test1/pi_challenge"
+            },
+            {
+                id: 3,
+                title: "九九からわり算ゲーム",
+                subject: "算数",
+                target: "九九、わり算、余り",
+                description: "九九の学びがいつの間にかわり算に。予習や学び直しに最適",
+                icon: "fa-calculator",
+                color: "emerald",
+                url: "https://taiasa.github.io/gamification_test1/kuku_warizan"
+            },
+            {
+                id: 4,
+                title: "割合インベーダーゲーム",
+                subject: "算数",
+                target: "割合、％",
+                description: "インベーダーゲームをしていたらいつのまにか割合を学んでいた…",
+                icon: "fa-calculator",
+                color: "emerald",
+                url: "https://taiasa.github.io/gamification_test1/invader"
+            },
+            {
+                id: 5,
+                title: "コインリバー",
+                subject: "社会",
+                target: "歴史",
+                description: "爽快感が突き抜ける歴史クイズゲーム",
+                icon: "fa-landmark",
+                color: "orange",
+                url: "https://taiasa.github.io/gamification_test1/coin_river/coin_river3"
+            },
+            {
+                id: 6,
+                title: "トーナメントメーカー",
+                subject: "学級経営",
+                target: "トーナメント、レク",
+                description: "ランダムなトーナメント戦を即時に生成。使い方は無限大！",
+                icon: "fa-broom",
+                color: "violet",
+                url: "https://taiasa.github.io/gamification_test1/tournament_maker"
+            },
+            {
+                id: 7,
+                title: "爆速お絵描き伝言ゲーム",
+                subject: "学級経営",
+                target: "複数人、レク、お絵描き",
+                description: "お絵描き伝言ゲームが手軽にできる。みんなの心を一つに合わせろ！",
+                icon: "fa-broom",
+                color: "violet",
+                url: "https://taiasa.github.io/gamification_test1/bakusoku_oekaki"
+            },
+            {
+                id: 8,
+                title: "漢字パクパク",
+                subject: "学級経営",
+                target: "漢字、同音異義語",
+                description: "正しい感じを食べないとお腹が壊れちゃう！",
+                icon: "fa-pen-nib",
+                color: "blue",
+                url: "https://taiasa.github.io/gamification_test1/tournament_maker"
+            },
+            {
+                id: 9,
+                title: "ピンポンゲーム",
+                subject: "学級経営",
+                target: "対戦、レク、ただのゲーム",
+                description: "学級経営使えるかはあなた次第。ただのピンポンゲーム",
+                icon: "fa-broom",
+                color: "violet",
+                url: "https://taiasa.github.io/gamification_test1/pong"
+            },
+            {
+                id: 10,
+                title: "カラーブレンド",
+                subject: "学級経営",
+                target: "対戦、レク、RGB値、",
+                description: "色の三原色を使いこなせ！気づけばRGB値に詳しくなっちゃった",
+                icon: "fa-broom",
+                color: "violet",
+                url: "https://taiasa.github.io/gamification_test1/tournament_maker"
+            },
+            {
+                id: 11,
+                title: "MAGIC MASTER",
+                subject: "英語",
+                target: "タイピング、アルファベット、英単語",
+                description: "いまいち完成度が高くないファンタジックタイピング！",
+                icon: "fa-comment",
+                color: "pink",
+                url: "https://taiasa.github.io/gamification_test1/magic_master"
+            },
+            {
+                id: 12,
+                title: "元素をキャッチ",
+                subject: "理科",
+                target: "元素記号",
+                description: "すいへいりーべぼくのふね…",
+                icon: "fa-star",
+                color: "indigo",
+                url: "https://taiasa.github.io/gamification_test1/rika_trial2"
+            },
+            {
+                id: 13,
+                title: "理科モン・クエスト",
+                subject: "理科",
+                target: "４択、理科の各単元",
+                description: "雰囲気だけはRPG。中身はただの４択クイズ！",
+                icon: "fa-star",
+                color: "indigo",
+                url: "https://taiasa.github.io/gamification_test1/rika_trial1"
+            },
+            {
+                id: 14,
+                title: "ピタッと年号",
+                subject: "社会",
+                target: "歴史、年号、暗記",
+                description: "時代ごとに作り込んだらもっとよくなりそう。",
+                icon: "fa-landmark",
+                color: "orange",
+                url: "https://taiasa.github.io/gamification_test1/pita_nengo"
+            },
+            {
+                id: 15,
+                title: "ボンバークイズアリーナ",
+                subject: "算数",
+                target: "複数人、４択",
+                description: "ランダムなトーナメント戦を即時に生成。使い方は無限大！",
+                icon: "fa-calculator",
+                color: "emerald",
+                url: "https://taiasa.github.io/gamification_test1/bomber_quiz"
+            },
+{
+                id: 16,
+                title: "計算ヘビゲーム",
+                subject: "算数",
+                target: "四則計算",
+                description: "昔懐かしヘビゲームと四則計算の融合",
+                icon: "fa-calculator",
+                color: "emerald",
+                url: "https://taiasa.github.io/gamification_test1/hebi_game"
+            },
+{
+                id: 17,
+                title: "約分ゲーム",
+                subject: "算数",
+                target: "約分、公約数",
+                description: "テンポよく公約数を見つけて約分しよう",
+                icon: "fa-calculator",
+                color: "emerald",
+                url: "https://taiasa.github.io/gamification_test1/yakubun"
+            },
+{
+                id: 18,
+                title: "約数もぐらたたき",
+                subject: "算数",
+                target: "約数",
+                description: "恨みいっぱいの約数をたたきのめそう！",
+                icon: "fa-calculator",
+                color: "emerald",
+                url: "https://taiasa.github.io/gamification_test1/yakusu_tataki"
+            },
+{
+                id: 19,
+                title: "計算爆弾ゲーム",
+                subject: "算数",
+                target: "複数人、四則計算",
+                description: "ドキドキしたら計算できない！己の限界を超えて計算せよ",
+                icon: "fa-calculator",
+                color: "emerald",
+                url: "https://taiasa.github.io/gamification_test1/boom_pass"
+            },
+{
+                id: 20,
+                title: "面積の魔法使い",
+                subject: "算数",
+                target: "面積、図形",
+                description: "マス目を使って公式を頭に叩き込め",
+                icon: "fa-calculator",
+                color: "emerald",
+                url: "https://taiasa.github.io/gamification_test1/menseki_sakuzu"
+            },
+{
+                id: 21,
+                title: "超速計算〇×ゲーム",
+                subject: "算数",
+                target: "四則計算",
+                description: "計算感覚を養え。君は超速に耐えられるか…",
+                icon: "fa-calculator",
+                color: "emerald",
+                url: "https://taiasa.github.io/gamification_test1/speedgrader_cal"
+            },
+{
+                id: 22,
+                title: "計算神経衰弱",
+                subject: "算数",
+                target: "四則計算",
+                description: "神経衰弱をしながら計算を楽しもう",
+                icon: "fa-calculator",
+                color: "emerald",
+                url: "https://taiasa.github.io/gamification_test1/keisan_memory_card"
+            },
+{
+                id: 23,
+                title: "ネオンジャンプ",
+                subject: "算数",
+                target: "小数の計算",
+                description: "シンプルな世界で飛び跳ねながら小数に親しもう",
+                icon: "fa-calculator",
+                color: "emerald",
+                url: "https://taiasa.github.io/gamification_test1/neon_jump"
+            },
+{
+                id: 24,
+                title: "たし算ゲーム",
+                subject: "算数",
+                target: "低学年向け、たし算",
+                description: "かわいいキャラとたし算しよう",
+                icon: "fa-calculator",
+                color: "emerald",
+                url: "https://taiasa.github.io/gamification_test1/1nen_tashizan"
+            },
+{
+                id: 25,
+                title: "たして１０！",
+                subject: "算数",
+                target: "低学年向け、たし算、１０になる数",
+                description: "さくらんぼの入り口。１０になる数を見つけよう",
+                icon: "fa-calculator",
+                color: "emerald",
+                url: "https://taiasa.github.io/gamification_test1/tashite10"
+            }
+        ];
+
+        function renderGames(filter = 'all', keyword = '') {
+            const grid = document.getElementById('gameGrid');
+            const emptyState = document.getElementById('emptyState');
+            grid.innerHTML = '';
+
+            const filteredGames = games.filter(game => {
+                const matchesSubject = filter === 'all' || game.subject === filter;
+                const matchesKeyword = game.title.toLowerCase().includes(keyword.toLowerCase()) || 
+                                     game.description.toLowerCase().includes(keyword.toLowerCase());
+                return matchesSubject && matchesKeyword;
+            });
+
+            if (filteredGames.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                filteredGames.forEach(game => {
+                    const card = document.createElement('div');
+                    card.className = 'glass-card rounded-[2.5rem] p-8 flex flex-col group';
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-8">
+                            <div class="w-16 h-16 rounded-2xl bg-${game.color}-500 text-white flex items-center justify-center shadow-lg shadow-${game.color}-500/30">
+                                <i class="fas ${game.icon} text-3xl"></i>
+                            </div>
+                            <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 border border-slate-200">
+                                ${game.target}
+                            </span>
+                        </div>
+                        <div class="mb-4">
+                            <span class="text-xs font-bold text-${game.color}-500 mb-1 block">${game.subject}</span>
+                            <h3 class="text-2xl font-black text-slate-900 leading-tight group-hover:text-blue-600 transition-colors">${game.title}</h3>
+                        </div>
+                        <p class="text-slate-500 text-sm leading-relaxed mb-8 font-medium">${game.description}</p>
+                        <a href="${game.url}" target="_blank" class="mt-auto w-full py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-blue-600 transition-all flex items-center justify-center gap-3 active:scale-95 text-center">
+                            <span>あそんでみる</span>
+                            <i class="fas fa-external-link-alt text-[10px]"></i>
+                        </a>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+        }
+
+        function filterContent(subject) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                const isAll = subject === 'all' && btn.innerText === 'ALL';
+                const isMatch = btn.innerText === subject;
+                if(isAll || isMatch) {
+                    btn.classList.add('tag-active');
+                } else {
+                    btn.classList.remove('tag-active');
+                }
+            });
+
+            const keyword = document.getElementById('searchInput').value;
+            renderGames(subject, keyword);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const activeFilterBtn = document.querySelector('.filter-btn.tag-active');
+            let subject = 'all';
+            if (activeFilterBtn && activeFilterBtn.innerText !== 'ALL') {
+                subject = activeFilterBtn.innerText;
+            }
+            renderGames(subject, e.target.value);
+        });
+
+        window.onload = () => renderGames();
+    </script>
+</body>
+</html>
