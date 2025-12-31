@@ -177,6 +177,8 @@
                 <button onclick="filterContent('社会')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">社会</button>
                 <button onclick="filterContent('英語')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">英語</button>
                 <button onclick="filterContent('学級経営')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">学級経営</button>
+		<button onclick="filterContent('レク')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">レク</button>
+		<button onclick="filterContent('チャレンジ')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">チャレンジ</button>
             </div>
         </div>
     </header>
@@ -215,11 +217,11 @@
             { id: 3, title: "九九からわり算ゲーム", subject: "算数", target: "九九、わり算、余り", description: "九九の学びがいつの間にかわり算に。予習や学び直しに最適", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/kuku_warizan" },
             { id: 4, title: "割合インベーダー", subject: "算数", target: "割合、％", description: "インベーダーゲームをしていたらいつのまにか割合を学んでいた…", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/invader" },
             { id: 5, title: "コインリバー", subject: "社会", target: "歴史", description: "爽快感が突き抜ける歴史クイズゲーム", icon: "fa-landmark", color: "orange", url: "https://taiasa.github.io/gamification_test1/coin_river/coin_river3" },
-            { id: 6, title: "トーナメントメーカー", subject: "学級経営", target: "トーナメント、レク", description: "ランダムなトーナメント戦を即時に生成。使い方は無限大！", icon: "fa-broom", color: "violet", url: "https://taiasa.github.io/gamification_test1/tournament_maker" },
-            { id: 7, title: "爆速お絵描き伝言", subject: "学級経営", target: "複数人、レク、お絵描き", description: "お絵描き伝言ゲームが手軽にできる。みんなの心を一つに合わせろ！", icon: "fa-broom", color: "violet", url: "https://taiasa.github.io/gamification_test1/bakusoku_oekaki" },
+            { id: 6, title: "トーナメントメーカー", subject: "学級経営", target: "トーナメント、レク", description: "ランダムなトーナメント戦を即時に生成。使い方は無限大！", icon: "fa-chalkboard-user", color: "violet", url: "https://taiasa.github.io/gamification_test1/tournament_maker" },
+            { id: 7, title: "爆速お絵描き伝言", subject: "レク", target: "複数人、レク、お絵描き", description: "お絵描き伝言ゲームが手軽にできる。みんなの心を一つに合わせろ！", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/bakusoku_oekaki" },
             { id: 8, title: "漢字パクパク", subject: "国語", target: "漢字、同音異義語", description: "正しい漢字を食べないとお腹が壊れちゃう！", icon: "fa-pen-nib", color: "blue", url: "https://taiasa.github.io/gamification_test1/tournament_maker" },
-            { id: 9, title: "ピンポンゲーム", subject: "学級経営", target: "対戦、レク、ただのゲーム", description: "学級経営使えるかはあなた次第。ただのピンポンゲーム", icon: "fa-broom", color: "violet", url: "https://taiasa.github.io/gamification_test1/pong" },
-            { id: 10, title: "カラーブレンド", subject: "学級経営", target: "対戦、レク、RGB値", description: "色の三原色を使いこなせ！気づけばRGB値に詳しくなっちゃった", icon: "fa-broom", color: "violet", url: "https://taiasa.github.io/gamification_test1/color_blend" },
+            { id: 9, title: "ピンポンゲーム", subject: "レク", target: "対戦、レク、ただのゲーム", description: "学級経営使えるかはあなた次第。ただのピンポンゲーム", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/pong" },
+            { id: 10, title: "カラーブレンド", subject: "レク", target: "対戦、レク、RGB値", description: "色の三原色を使いこなせ！気づけばRGB値に詳しくなっちゃった", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/color_blend" },
             { id: 11, title: "MAGIC MASTER", subject: "英語", target: "タイピング、英単語", description: "いまいち完成度が高くないファンタジックタイピング！", icon: "fa-comment", color: "pink", url: "https://taiasa.github.io/gamification_test1/magic_master" },
             { id: 12, title: "元素をキャッチ", subject: "理科", target: "元素記号", description: "すいへいりーべぼくのふね…", icon: "fa-star", color: "indigo", url: "https://taiasa.github.io/gamification_test1/rika_trial2" },
             { id: 13, title: "理科モン・クエスト", subject: "理科", target: "４択、理科の各単元", description: "雰囲気だけはRPG。中身はただの４択クイズ！", icon: "fa-star", color: "indigo", url: "https://taiasa.github.io/gamification_test1/rika_trial1" },
@@ -243,11 +245,12 @@
             { id: 31, title: "ナンバーチェイン", subject: "算数", target: "四則計算、約数", description: "頭も指先も全集中！君はボス戦のプレッシャーを超えられるか…", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/number_chain" },
             { id: 32, title: "ロイヤルコンシェルジュ", subject: "国語", target: "敬語、尊敬語、謙譲語、丁寧語", description: "日本語の妙技、敬語を身に付けよう！", icon: "fa-pen-nib", color: "blue", url: "https://taiasa.github.io/gamification_test1/concierge" },
             { id: 33, title: "ENGLISH RUN", subject: "英語", target: "単語、穴埋め", description: "軽快にジャンプしながら、時々スーパーどすん！", icon: "fa-comment", color: "pink", url: "https://taiasa.github.io/gamification_test1/sky_high_english" },
-            { id: 34, title: "ネオンリンク", subject: "学級経営", target: "一筆書き、爽快感", description: "一筆書きで最高のそう快感を味わおう！", icon: "fa-broom", color: "violet", url: "https://taiasa.github.io/gamification_test1/neon_link" },
+            { id: 34, title: "ネオンリンク", subject: "レク", target: "一筆書き、爽快感", description: "一筆書きで最高のそう快感を味わおう！", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/neon_link" },
             { id: 35, title: "GALAXY GEM HUNTER", subject: "算数", target: "四則計算、文章題", description: "クリッカー×ガチャ×算数！これぞ最強の組み合わせゲーム！", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/click_gacha_math" },
             { id: 36, title: "CHRONO COLLECTOR", subject: "社会", target: "歴史", description: "歴史パワーを持つ宝石を集めて、偉人アイテムをゲットしよう。鍵は歴史の知識！", icon: "fa-landmark", color: "orange", url: "https://taiasa.github.io/chrono_collector_by_build/" }, 
-            { id: 37, title: "心を一つに～マッチでゴー～", subject: "学級経営", target: "複数人、言葉合わせ、協力", description: "君たちの絆は本物か。心を一つに！", icon: "fa-broom", color: "violet", url: "https://taiasa.github.io/gamification_test1/kokoro_hitotsu" },
-            { id: 38, title: "確率 DE ガチャ", subject: "算数", target: "確率", description: "ガチャゲーに人生を左右されないため…確率という概念を体感せよ", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/probability_gacha" }
+            { id: 37, title: "心を一つに～マッチでゴー～", subject: "レク", target: "複数人、言葉合わせ、協力", description: "君たちの絆は本物か。心を一つに！", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/kokoro_hitotsu" },
+            { id: 38, title: "確率 DE ガチャ", subject: "算数", target: "確率", description: "ガチャゲーに人生を左右されないため…確率という概念を体感せよ", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/probability_gacha" },
+            { id: 39, title: "サイバーショートカット", subject: "チャレンジ", target: "ショートカット、情報系", description: "君はショートカットをどこまで使いこなせているかのか！？", icon: "fa-thumbs-up", color: "rose", url: "https://taiasa.github.io/gamification_test1/cyber_shortcut" }
         ];
 
         // 修正版：リッチな配色のための設定
@@ -258,6 +261,8 @@
             "社会": { from: "from-orange-500", to: "to-amber-400", bg: "bg-orange-50", text: "text-orange-600", border: "border-orange-100" },
             "英語": { from: "from-pink-500", to: "to-rose-400", bg: "bg-pink-50", text: "text-pink-600", border: "border-pink-100" },
             "学級経営": { from: "from-violet-500", to: "to-fuchsia-400", bg: "bg-violet-50", text: "text-violet-600", border: "border-violet-100" },
+ 	　　"レク": { from: "from-yellow-400", to: "to-orange-300", bg: "bg-yellow-50", text: "text-yellow-600", border: "border-yellow-100" },
+"チャレンジ": { from: "from-cyan-500", to: "to-sky-400", bg: "bg-cyan-50", text: "text-cyan-600", border: "border-cyan-100" },
             "default": { from: "from-slate-500", to: "to-gray-400", bg: "bg-slate-50", text: "text-slate-600", border: "border-slate-100" }
         };
 
@@ -288,7 +293,7 @@
                 filteredGames.forEach(game => {
                     // カードデザインは修正版の高品質なものを採用
                     const style = getSubjectStyle(game.subject);
-                    const isNew = game.id > 28; // 新着バッジの判定
+                    const isNew = game.id > 32; // 新着バッジの判定
 
                     const card = document.createElement('div');
                     card.className = 'game-card rounded-3xl p-6 flex flex-col relative group h-full';
@@ -355,8 +360,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
