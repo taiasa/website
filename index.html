@@ -302,7 +302,7 @@
                 filteredGames.forEach(game => {
                     // カードデザインは修正版の高品質なものを採用
                     const style = getSubjectStyle(game.subject);
-                    const isNew = game.id > 32; // 新着バッジの判定
+                    const isNew = game.id > 40; // 新着バッジの判定
 
                     const card = document.createElement('div');
                     card.className = 'game-card rounded-3xl p-6 flex flex-col relative group h-full';
@@ -369,6 +369,7 @@
     </script>
 </body>
 </html>
+
 
 
 
