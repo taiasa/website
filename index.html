@@ -271,7 +271,8 @@
 		{ id: 53, title: "ラウンドマスター", subject: "算数", target: "四捨五入、概数", description: "四捨五入を思いのままに使いこなせ", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/round_master" },
 		{ id: 54, title: "わり算筆算道場", subject: "算数", target: "わり算、筆算、あまり", description: "合言葉は「立てる」「かける」「ひく」「おろす」！", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/warizan_hissan" },
 		{ id: 55, title: "DoodleFlow -文学暗記の最終兵器-", subject: "国語", target: "現代文、古文、暗記", description: "本当かウソか、とにかく手を動かし続けて暗記しよう！", icon: "fa-pen-nib", color: "blue", url: "https://taiasa.github.io/gamification_test1/DoodleFlow" },
-		{ id: 56, title: "コトバの箱庭", subject: "チャレンジ", target: "日記、言葉、タイピング", description: "タイピングは目的じゃない。思考を表現するツールだ！", icon: "fa-thumbs-up", color: "rose", url: "https://taiasa.github.io/gamification_test1/kotoba_hakoniwa" }
+		{ id: 56, title: "コトバの箱庭", subject: "チャレンジ", target: "日記、言葉、タイピング", description: "タイピングは目的じゃない。思考を表現するツールだ！", icon: "fa-thumbs-up", color: "rose", url: "https://taiasa.github.io/gamification_test1/kotoba_hakoniwa" },
+		{ id: 57, title: "ピカッとポチッと", subject: "レク", target: "複数人、タイピング", description: "息を合わせてピカッとポチッとできたら高得点", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/pikapochi" }
     ];
 
     const subjectStyles = {
@@ -365,7 +366,7 @@
             
             filteredGames.forEach(game => {
                 const style = getSubjectStyle(game.subject);
-                const isNew = game.id > 40;
+                const isNew = game.id > 48;
                 const isFav = favoriteIds.includes(game.id);
                 // ハートアイコンの状態切り替え
                 const heartIconClass = isFav ? "fas fa-heart text-pink-500" : "far fa-heart text-slate-300";
@@ -458,6 +459,7 @@
     </script>
 </body>
 </html>
+
 
 
 
