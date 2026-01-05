@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="遊びと学びが融合するゲーミフィケーション・ライブラリ。現役教員が開発した学習アプリ図鑑。">
     <title>EduGame Hub | ゲーミフィケーション×学習アプリ図鑑</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -11,7 +12,7 @@
     
     <style>
         /* =========================================
-           ここから上部は元のデザイン（オリジナル）
+           基本スタイル・装飾
            ========================================= */
         body {
             font-family: 'Noto Sans JP', sans-serif;
@@ -21,7 +22,6 @@
             position: relative;
         }
 
-        /* スタイリッシュな背景装飾（オリジナル） */
         .bg-decoration {
             position: fixed;
             top: 0;
@@ -87,6 +87,7 @@
 
         .filter-btn {
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
         .filter-btn:hover:not(.tag-active) {
@@ -95,10 +96,8 @@
         }
 
         /* =========================================
-           ここから下部は修正版のデザイン（カード等）
+           カードデザイン (Glassmorphism)
            ========================================= */
-        
-        /* 修正版のカードデザイン */
         .game-card {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(16px);
@@ -112,6 +111,14 @@
             background: rgba(255, 255, 255, 0.95);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.01);
             border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        /* 新着情報などのセクション用カード（ホバーで浮かない固定用） */
+        .info-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
         }
 
         .card-icon-wrapper {
@@ -129,6 +136,28 @@
         .badge-new {
             animation: pulse-soft 2s infinite ease-in-out;
         }
+
+        /* スクロールバー非表示 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* トップへ戻るボタン */
+        #backToTop {
+            transition: all 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+        }
+        #backToTop.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body class="text-slate-900">
@@ -138,9 +167,9 @@
         <div class="blob blob-2"></div>
     </div>
 
-    <!-- Navigation (Original) -->
+    <!-- Navigation -->
     <nav class="h-20 flex items-center justify-center border-b border-white/20 backdrop-blur-sm sticky top-0 z-50 bg-white/30">
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
             <div class="bg-slate-900 p-2 rounded-xl text-white shadow-lg shadow-blue-500/20">
                 <i class="fas fa-gamepad text-xl"></i>
             </div>
@@ -148,7 +177,7 @@
         </div>
     </nav>
 
-    <!-- Hero Section (Original Design) -->
+    <!-- Hero Section -->
     <header class="max-w-7xl mx-auto px-6 py-20 text-center">
         <div class="inline-block px-4 py-1.5 mb-6 rounded-full bg-blue-50 text-blue-600 text-xs font-bold tracking-widest uppercase border border-blue-100">
             "Keep challenging yourself"
@@ -159,34 +188,38 @@
         </h1>
         <p class="text-slate-500 text-lg md:text-xl max-w-2xl mx-auto mb-12 font-medium">
             現役の小学校教員が趣味と実益を兼ねて開発した、<br class="hidden md:block">
-            <a href="https://taiasa.github.io/website/game_screen.png" target="_blank" rel="noopener noreferrer">遊び</a>と学びが融合するゲーミフィケーション・ライブラリ。
+            <a href="https://taiasa.github.io/website/game_screen.png" target="_blank" rel="noopener noreferrer" class="hover:text-blue-500 underline decoration-blue-300 decoration-2 underline-offset-4 transition-colors">遊び</a>と学びが融合するゲーミフィケーション・ライブラリ。
         </p>
 
-        <!-- Search & Filter Area (Original Design) -->
+        <!-- Search & Filter Area -->
         <div class="max-w-4xl mx-auto space-y-8">
             <div class="relative group">
                 <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"></i>
-                <input type="text" id="searchInput" placeholder="探したい教科やキーワードを入力..." class="w-full pl-16 pr-8 py-5 bg-white shadow-2xl shadow-slate-200/50 border-none rounded-3xl focus:ring-4 focus:ring-blue-500/10 transition-all outline-none text-lg">
+                <input type="text" id="searchInput" placeholder="探したい教科やキーワードを入力..." class="w-full pl-16 pr-12 py-5 bg-white shadow-2xl shadow-slate-200/50 border-none rounded-3xl focus:ring-4 focus:ring-blue-500/10 transition-all outline-none text-lg">
+                <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 p-2 transition-colors" title="検索をクリア">
+                    <i class="fas fa-times-circle text-xl"></i>
+                </button>
             </div>
             
-            <div class="flex flex-wrap gap-3 justify-center">
-                <button onclick="filterContent('all')" class="filter-btn tag-active px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">ALL</button>
-                <button onclick="filterContent('国語')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">国語</button>
-                <button onclick="filterContent('算数')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">算数</button>
-                <button onclick="filterContent('理科')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">理科</button>
-                <button onclick="filterContent('社会')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">社会</button>
-                <button onclick="filterContent('英語')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">英語</button>
-                <button onclick="filterContent('ツール系')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">ツール系<button>
-	        	<button onclick="filterContent('レク')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">レク</button>
-		        <button onclick="filterContent('チャレンジ')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm">チャレンジ</button>
-                <button onclick="filterContent('favorites')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm text-pink-500"><i class="fas fa-heart mr-1"></i>お気に入り</button>
+            <div class="flex flex-nowrap md:flex-wrap gap-3 overflow-x-auto md:overflow-visible justify-start md:justify-center px-2 pb-4 md:pb-0 no-scrollbar -mx-6 md:mx-0 px-6 md:px-0">
+                <!-- 改良: onclickを resetAll() に変更 -->
+                <button onclick="resetAll()" class="filter-btn tag-active px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm flex-shrink-0">ALL</button>
+                <button onclick="filterContent('国語')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm flex-shrink-0">国語</button>
+                <button onclick="filterContent('算数')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm flex-shrink-0">算数</button>
+                <button onclick="filterContent('理科')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm flex-shrink-0">理科</button>
+                <button onclick="filterContent('社会')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm flex-shrink-0">社会</button>
+                <button onclick="filterContent('英語')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm flex-shrink-0">英語</button>
+                <button onclick="filterContent('ツール系')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm flex-shrink-0">ツール系</button>
+                <button onclick="filterContent('レク')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm flex-shrink-0">レク</button>
+                <button onclick="filterContent('チャレンジ')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm flex-shrink-0">チャレンジ</button>
+                <button onclick="filterContent('favorites')" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold bg-white border border-slate-200 shadow-sm text-pink-500 flex-shrink-0"><i class="fas fa-heart mr-1"></i>お気に入り</button>
             </div>
         </div>
     </header>
 
-    <!-- Main Content (Modified & Refined Design) -->
-    <main class="max-w-7xl mx-auto px-6 pb-32">
-        <!-- 修正版のGridシステム -->
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 pb-20">
+        <!-- Grid System -->
         <div id="gameGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Cards will be injected by JavaScript -->
         </div>
@@ -197,82 +230,145 @@
                 <i class="fas fa-ghost text-4xl text-slate-300"></i>
             </div>
             <p class="text-slate-400 font-bold text-xl">該当するアプリが見つかりません</p>
+            <button onclick="resetAll()" class="mt-4 text-blue-500 font-bold hover:underline">すべての条件をクリア</button>
         </div>
     </main>
 
-    <!-- Footer (Original Design) -->
+    <!-- Info Sections (New Feature) -->
+    <section class="max-w-7xl mx-auto px-6 mb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 新着情報エリア -->
+            <div class="lg:col-span-2">
+                <div class="info-card rounded-3xl p-8 h-full">
+                    <h2 class="text-2xl font-black mb-6 flex items-center gap-3">
+                        <span class="bg-blue-100 text-blue-600 p-2 rounded-lg"><i class="fas fa-bullhorn text-lg"></i></span>
+                        新着情報
+                    </h2>
+                    <ul class="space-y-4">
+                        <li class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 pb-4 border-b border-slate-100 last:border-0 last:pb-0">
+                            <span class="text-sm font-bold text-slate-400 font-mono">2026.01.06</span>
+                            <span class="px-2 py-0.5 bg-red-100 text-red-600 text-xs font-bold rounded">New</span>
+                            <p class="text-slate-600 text-sm font-medium">レク「ピカッとポチッと」を追加しました。</p>
+                        </li>
+                        <li class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 pb-4 border-b border-slate-100 last:border-0 last:pb-0">
+                            <span class="text-sm font-bold text-slate-400 font-mono">2026.01.06</span>
+                            <span class="px-2 py-0.5 bg-slate-100 text-slate-500 text-xs font-bold rounded">Info</span>
+                            <p class="text-slate-600 text-sm font-medium">Webページを大幅にリニューアルしました。</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 関連サイトエリア -->
+            <div class="lg:col-span-1">
+                <div class="info-card rounded-3xl p-8 h-full flex flex-col">
+                    <h2 class="text-2xl font-black mb-6 flex items-center gap-3">
+                        <span class="bg-emerald-100 text-emerald-600 p-2 rounded-lg"><i class="fas fa-link text-lg"></i></span>
+                        関連サイト
+                    </h2>
+                    <div class="space-y-3 flex-grow">
+                        <a href="#" class="block p-4 rounded-xl bg-slate-50 hover:bg-white hover:shadow-md border border-slate-100 transition-all group flex items-center justify-between">
+                            <span class="font-bold text-slate-600 group-hover:text-blue-600 transition-colors">テスト①</span>
+                            <i class="fas fa-external-link-alt text-slate-300 text-sm"></i>
+                        </a>
+                        <a href="#" class="block p-4 rounded-xl bg-slate-50 hover:bg-white hover:shadow-md border border-slate-100 transition-all group flex items-center justify-between">
+                            <span class="font-bold text-slate-600 group-hover:text-blue-600 transition-colors">テスト②</span>
+                            <i class="fas fa-external-link-alt text-slate-300 text-sm"></i>
+                        </a>
+                        <a href="#" class="block p-4 rounded-xl bg-slate-50 hover:bg-white hover:shadow-md border border-slate-100 transition-all group flex items-center justify-between">
+                            <span class="font-bold text-slate-600 group-hover:text-blue-600 transition-colors">テスト③</span>
+                            <i class="fas fa-external-link-alt text-slate-300 text-sm"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer class="py-20 bg-slate-900 text-white rounded-t-[3rem]">
         <div class="max-w-7xl mx-auto px-6 text-center">
             <div class="flex items-center justify-center gap-3 mb-8 opacity-50">
                 <i class="fas fa-gamepad text-2xl"></i>
                 <span class="text-xl font-black tracking-tighter">EduGame Hub</span>
             </div>
-            <p class="text-slate-400 text-sm font-medium">© 2024 EduGame Hub. Crafted with passion by an Educator.</p>
+            <div class="mb-8 flex justify-center gap-6 text-slate-400">
+                <a href="#" class="hover:text-white transition-colors">利用規約</a>
+                <a href="#" class="hover:text-white transition-colors">プライバシーポリシー</a>
+                <a href="#" class="hover:text-white transition-colors">お問い合わせ</a>
+            </div>
+            <p class="text-slate-400 text-sm font-medium">© 2026 EduGame Hub. Crafted with passion by an Educator.</p>
         </div>
     </footer>
 
+    <!-- Back to Top Button -->
+    <button id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-8 right-8 w-12 h-12 bg-white text-slate-900 rounded-full shadow-xl shadow-blue-500/20 z-40 flex items-center justify-center border border-slate-100 hover:bg-slate-900 hover:text-white group" aria-label="トップへ戻る">
+        <i class="fas fa-arrow-up group-hover:-translate-y-1 transition-transform"></i>
+    </button>
+
     <script>
     /* =================================================================
-       データ定義（ここは変更なし）
+       データ定義（releaseDateを追加）
+       すべてのゲームのリリース日を '2025-12-01' に設定しています。
        ================================================================= */
     const games = [
-        { id: 1, title: "プライムスマッシャー", subject: "算数", target: "約数、素数、素因数分解（中学）", description: "出てきた数を素数でわり切れ！気づけば中学の素因数分解につながる学びに！", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/prime_smasher" },
-        { id: 2, title: "パイチャレンジ", subject: "算数", target: "円周率、暗記", description: "あなたは円周率を何桁まで言えますか？目指せ１００桁マスター！", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/pi_challenge" },
-        { id: 3, title: "九九からわり算ゲーム", subject: "算数", target: "九九、わり算、余り", description: "九九の学びがいつの間にかわり算に。予習や学び直しに最適", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/kuku_warizan" },
-        { id: 4, title: "割合インベーダー", subject: "算数", target: "割合、％", description: "インベーダーゲームをしていたらいつのまにか割合を学んでいた…", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/invader" },
-        { id: 5, title: "コインリバー", subject: "社会", target: "歴史", description: "爽快感が突き抜ける歴史クイズゲーム", icon: "fa-landmark", color: "orange", url: "https://taiasa.github.io/gamification_test1/coin_river/coin_river3" },
-        { id: 6, title: "トーナメントメーカー", subject: "ツール系", target: "トーナメント、レク", description: "ランダムなトーナメント戦を即時に生成。使い方は無限大！", icon: "fa-chalkboard-user", color: "gray", url: "https://taiasa.github.io/gamification_test1/tournament_maker" },
-        { id: 7, title: "爆速お絵描き伝言", subject: "レク", target: "複数人、レク、お絵描き", description: "お絵描き伝言ゲームが手軽にできる。みんなの心を一つに合わせろ！", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/bakusoku_oekaki" },
-        { id: 8, title: "漢字パクパク", subject: "国語", target: "漢字、同音異義語", description: "正しい漢字を食べないとお腹が壊れちゃう！", icon: "fa-pen-nib", color: "blue", url: "https://taiasa.github.io/gamification_test1/tournament_maker" },
-        { id: 9, title: "ピンポンゲーム", subject: "レク", target: "対戦、レク、ただのゲーム", description: "学校現場でどう使えるかはあなた次第。ただのピンポンゲーム", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/pong" },
-        { id: 10, title: "カラーブレンド", subject: "レク", target: "対戦、レク、RGB値", description: "色の三原色を使いこなせ！気づけばRGB値に詳しくなっちゃった", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/color_blend" },
-        { id: 11, title: "MAGIC MASTER", subject: "英語", target: "タイピング、英単語", description: "いまいち完成度が高くないファンタジックタイピング！", icon: "fa-comment", color: "pink", url: "https://taiasa.github.io/gamification_test1/magic_master" },
-        { id: 12, title: "元素をキャッチ", subject: "理科", target: "元素記号", description: "すいへいりーべぼくのふね…", icon: "fa-star", color: "indigo", url: "https://taiasa.github.io/gamification_test1/rika_trial2" },
-        { id: 13, title: "理科モン・クエスト", subject: "理科", target: "４択、理科の各単元", description: "雰囲気だけはRPG。中身はただの４択クイズ！", icon: "fa-star", color: "indigo", url: "https://taiasa.github.io/gamification_test1/rika_trial1" },
-        { id: 14, title: "ピタッと年号", subject: "社会", target: "歴史、年号、暗記", description: "時代ごとに作り込んだらもっとよくなりそう。", icon: "fa-landmark", color: "orange", url: "https://taiasa.github.io/gamification_test1/pita_nengo" },
-        { id: 15, title: "ボンバークイズ", subject: "算数", target: "複数人、４択", description: "ランダムなトーナメント戦を即時に生成。使い方は無限大！", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/bomber_quiz" },
-        { id: 16, title: "計算ヘビゲーム", subject: "算数", target: "四則計算", description: "昔懐かしヘビゲームと四則計算の融合", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/hebi_game" },
-        { id: 17, title: "約分ゲーム", subject: "算数", target: "約分、公約数", description: "テンポよく公約数を見つけて約分しよう", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/yakubun" },
-        { id: 18, title: "約数もぐらたたき", subject: "算数", target: "約数", description: "恨みいっぱいの約数をたたきのめそう！", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/yakusu_tataki" },
-        { id: 19, title: "計算爆弾ゲーム", subject: "算数", target: "複数人、四則計算", description: "ドキドキしたら計算できない！己の限界を超えて計算せよ", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/boom_pass" },
-        { id: 20, title: "面積の魔法使い", subject: "算数", target: "面積、図形", description: "マス目を使って公式を頭に叩き込め", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/menseki_sakuzu" },
-        { id: 21, title: "超速計算〇×ゲーム", subject: "算数", target: "四則計算", description: "計算感覚を養え。君は超速に耐えられるか…", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/speedgrader_cal" },
-        { id: 22, title: "計算神経衰弱", subject: "算数", target: "四則計算", description: "神経衰弱をしながら計算を楽しもう", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/keisan_memory_card" },
-        { id: 23, title: "ネオンジャンプ", subject: "算数", target: "小数の計算", description: "シンプルな世界で飛び跳ねながら小数に親しもう", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/neon_jump" },
-        { id: 24, title: "たし算ゲーム", subject: "算数", target: "低学年向け、たし算", description: "かわいいキャラとたし算しよう", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/1nen_tashizan" },
-        { id: 25, title: "たして１０！", subject: "算数", target: "低学年向け、たし算", description: "さくらんぼの入り口。１０になる数を見つけよう", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/tashite10" },
-        { id: 26, title: "世界遺産オセロ", subject: "社会", target: "１人、対戦、世界遺産", description: "普通に難しい。知らないことが多い", icon: "fa-landmark", color: "orange", url: "https://taiasa.github.io/gamification_test1/reversi" },
-        { id: 27, title: "すごろく DE 理科", subject: "理科", target: "１人、複数人、理科", description: "色々なジャンルを網羅したすごろくゲーム。", icon: "fa-star", color: "indigo", url: "https://taiasa.github.io/gamification_test1/sugoroku_de_rika" },
-        { id: 28, title: "すごろく DE English", subject: "英語", target: "１人、複数人、クイズ", description: "なんとなくほのぼのすごろく。表示はすべて英語です", icon: "fa-comment", color: "pink", url: "https://taiasa.github.io/gamification_test1/sugoroku_de_english" },
-        { id: 29, title: "ブロック崩し面積編", subject: "算数", target: "面積、暗算", description: "動きは滑らかになった…。あとは面積の公式だ…", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/block_kuzushi_menseki2" },
-        { id: 30, title: "部首ライダー", subject: "国語", target: "部首、つくり、漢字", description: "爽快感いっぱいに倒した敵の数に応じて問題を解こう！", icon: "fa-pen-nib", color: "blue", url: "https://taiasa.github.io/gamification_test1/busyu_raider" },
-        { id: 31, title: "ナンバーチェイン", subject: "算数", target: "四則計算、約数", description: "頭も指先も全集中！君はボス戦のプレッシャーを超えられるか…", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/number_chain" },
-        { id: 32, title: "ロイヤルコンシェルジュ", subject: "国語", target: "敬語、尊敬語、謙譲語、丁寧語", description: "日本語の妙技、敬語を身に付けよう！", icon: "fa-pen-nib", color: "blue", url: "https://taiasa.github.io/gamification_test1/concierge" },
-        { id: 33, title: "ENGLISH RUN", subject: "英語", target: "単語、穴埋め", description: "軽快にジャンプしながら、時々スーパーどすん！", icon: "fa-comment", color: "pink", url: "https://taiasa.github.io/gamification_test1/sky_high_english" },
-        { id: 34, title: "ネオンリンク", subject: "レク", target: "一筆書き、爽快感", description: "一筆書きで最高のそう快感を味わおう！", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/neon_link" },
-        { id: 35, title: "GALAXY GEM HUNTER", subject: "算数", target: "四則計算、文章題", description: "クリッカー×ガチャ×算数！これぞ最強の組み合わせゲーム！", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/click_gacha_math" },
-        { id: 36, title: "CHRONO COLLECTOR", subject: "社会", target: "歴史", description: "歴史パワーを持つ宝石を集めて、偉人アイテムをゲットしよう。鍵は歴史の知識！", icon: "fa-landmark", color: "orange", url: "https://taiasa.github.io/chrono_collector_by_build/" }, 
-        { id: 37, title: "心を一つに～マッチでゴー～", subject: "レク", target: "複数人、言葉合わせ、協力", description: "君たちの絆は本物か。心を一つに！", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/kokoro_hitotsu" },
-        { id: 38, title: "確率 DE ガチャ", subject: "算数", target: "確率", description: "ガチャゲーに人生を左右されないため…確率という概念を体感せよ", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/probability_gacha" },
-        { id: 39, title: "サイバーショートカット", subject: "チャレンジ", target: "ショートカット、情報系", description: "君はショートカットをどこまで使いこなせているかのか！？", icon: "fa-thumbs-up", color: "rose", url: "https://taiasa.github.io/gamification_test1/cyber_shortcut" },
-        { id: 40, title: "じゃんけんの沼", subject: "算数", target: "確率、じゃんけん", description: "運を捨てろ。確率を支配せよ。", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/janken" },
-        { id: 41, title: "九九マスター", subject: "算数", target: "九九", description: "スピーディな九九体験", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/kuku" },
-        { id: 42, title: "インド式計算マスターへの道", subject: "チャレンジ", target: "インド式、かけ算、暗算", description: "解き明かせ、計算のパズル", icon: "fa-thumbs-up", color: "rose", url: "https://taiasa.github.io/gamification_test1/indoshiki" },
-        { id: 43, title: "日本１００名城", subject: "社会", target: "歴史、城", description: "君はいくつの名城を知っているか。", icon: "fa-landmark", color: "orange", url: "https://taiasa.github.io/gamification_test1/100meijou" },
-        { id: 44, title: "エレメントクエスト", subject: "理科", target: "元素、原子番号、元素記号", description: "元素記号と元素周期表の位置だけでも覚えちゃえ", icon: "fa-star", color: "indigo", url: "https://taiasa.github.io/gamification_test1/element" },
-        { id: 45, title: "掃除当番表作成アプリ", subject: "ツール系", target: "掃除当番", description: "とりあえずで作っておいて、最後は必ず人の手で…", icon: "fa-chalkboard-user", color: "gray", url: "https://taiasa.github.io/gamification_test1/broom" },
-        { id: 46, title: "イマコレタイマー（時間版）", subject: "ツール系", target: "タイマー、可視化", description: "残り何分、何をすべきかが一目でわかる便利ツール", icon: "fa-chalkboard-user", color: "gray", url: "https://taiasa.github.io/gamification_test1/imakore_timer" },
-        { id: 47, title: "ハイパービンゴ", subject: "レク", target: "ビンゴ", description: "普通のビンゴとレクビンゴあり", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/bingo" },
-        { id: 48, title: "歴トレ", subject: "社会", target: "歴史、時代、年号、元号", description: "時代、元号、年号のセンスを磨け！", icon: "fa-landmark", color: "orange", url: "https://taiasa.github.io/gamification_test1/rekitore" },
-        { id: 49, title: "憲法マスター", subject: "社会", target: "憲法、条文暗記、タイピング", description: "タイピングしながら憲法も覚えられる画期的アプリ", icon: "fa-landmark", color: "orange", url: "https://taiasa.github.io/gamification_test1/kenpou_master" },
-        { id: 50, title: "イマコレタイマー2（時刻版）", subject: "ツール系", target: "タイマー、時計、可視化", description: "今の時間、次の時間に何をすべきかが一目でわかる便利ツール。あの人気アプリの第二弾！", icon: "fa-chalkboard-user", color: "gray", url: "https://taiasa.github.io/gamification_test1/imakore_timer2" },
-        { id: 51, title: "ネオンイングリッシュ", subject: "英語", target: "英単語、名詞", description: "英語を使って、ネオンの世界をかけぬけろ！", icon: "fa-comment", color: "pink", url: "https://taiasa.github.io/gamification_test1/neon_english" },
-        { id: 52, title: "漢字の極み", subject: "国語", target: "漢字、書きとり", description: "極めろ、漢字の形を…", icon: "fa-pen-nib", color: "blue", url: "https://taiasa.github.io/gamification_test1/kanji_kiwami" },
-		{ id: 53, title: "ラウンドマスター", subject: "算数", target: "四捨五入、概数", description: "四捨五入を思いのままに使いこなせ", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/round_master" },
-		{ id: 54, title: "わり算筆算道場", subject: "算数", target: "わり算、筆算、あまり", description: "合言葉は「立てる」「かける」「ひく」「おろす」！", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/warizan_hissan" },
-		{ id: 55, title: "DoodleFlow -文学暗記の最終兵器-", subject: "国語", target: "現代文、古文、暗記", description: "本当かウソか、とにかく手を動かし続けて暗記しよう！", icon: "fa-pen-nib", color: "blue", url: "https://taiasa.github.io/gamification_test1/DoodleFlow" },
-		{ id: 56, title: "コトバの箱庭", subject: "チャレンジ", target: "日記、言葉、タイピング", description: "タイピングは目的じゃない。思考を表現するツールだ！", icon: "fa-thumbs-up", color: "rose", url: "https://taiasa.github.io/gamification_test1/kotoba_hakoniwa" },
-		{ id: 57, title: "ピカッとポチッと", subject: "レク", target: "複数人、タイピング", description: "息を合わせてピカッとポチッとできたら高得点", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/pikapochi" }
+        { id: 1, title: "プライムスマッシャー", subject: "算数", target: "約数、素数、素因数分解（中学）", description: "出てきた数を素数でわり切れ！気づけば中学の素因数分解につながる学びに！", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/prime_smasher", releaseDate: "2025-12-01" },
+        { id: 2, title: "パイチャレンジ", subject: "算数", target: "円周率、暗記", description: "あなたは円周率を何桁まで言えますか？目指せ１００桁マスター！", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/pi_challenge", releaseDate: "2025-12-01" },
+        { id: 3, title: "九九からわり算ゲーム", subject: "算数", target: "九九、わり算、余り", description: "九九の学びがいつの間にかわり算に。予習や学び直しに最適", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/kuku_warizan", releaseDate: "2025-12-01" },
+        { id: 4, title: "割合インベーダー", subject: "算数", target: "割合、％", description: "インベーダーゲームをしていたらいつのまにか割合を学んでいた…", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/invader", releaseDate: "2025-12-01" },
+        { id: 5, title: "コインリバー", subject: "社会", target: "歴史", description: "爽快感が突き抜ける歴史クイズゲーム", icon: "fa-landmark", color: "orange", url: "https://taiasa.github.io/gamification_test1/coin_river/coin_river3", releaseDate: "2025-12-01" },
+        { id: 6, title: "トーナメントメーカー", subject: "ツール系", target: "トーナメント、レク", description: "ランダムなトーナメント戦を即時に生成。使い方は無限大！", icon: "fa-chalkboard-user", color: "gray", url: "https://taiasa.github.io/gamification_test1/tournament_maker", releaseDate: "2025-12-01" },
+        { id: 7, title: "爆速お絵描き伝言", subject: "レク", target: "複数人、レク、お絵描き", description: "お絵描き伝言ゲームが手軽にできる。みんなの心を一つに合わせろ！", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/bakusoku_oekaki", releaseDate: "2025-12-01" },
+        { id: 8, title: "漢字パクパク", subject: "国語", target: "漢字、同音異義語", description: "正しい漢字を食べないとお腹が壊れちゃう！", icon: "fa-pen-nib", color: "blue", url: "https://taiasa.github.io/gamification_test1/tournament_maker", releaseDate: "2025-12-01" },
+        { id: 9, title: "ピンポンゲーム", subject: "レク", target: "対戦、レク、ただのゲーム", description: "学校現場でどう使えるかはあなた次第。ただのピンポンゲーム", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/pong", releaseDate: "2025-12-01" },
+        { id: 10, title: "カラーブレンド", subject: "レク", target: "対戦、レク、RGB値", description: "色の三原色を使いこなせ！気づけばRGB値に詳しくなっちゃった", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/color_blend", releaseDate: "2025-12-01" },
+        { id: 11, title: "MAGIC MASTER", subject: "英語", target: "タイピング、英単語", description: "いまいち完成度が高くないファンタジックタイピング！", icon: "fa-comment", color: "pink", url: "https://taiasa.github.io/gamification_test1/magic_master", releaseDate: "2025-12-01" },
+        { id: 12, title: "元素をキャッチ", subject: "理科", target: "元素記号", description: "すいへいりーべぼくのふね…", icon: "fa-star", color: "indigo", url: "https://taiasa.github.io/gamification_test1/rika_trial2", releaseDate: "2025-12-01" },
+        { id: 13, title: "理科モン・クエスト", subject: "理科", target: "４択、理科の各単元", description: "雰囲気だけはRPG。中身はただの４択クイズ！", icon: "fa-star", color: "indigo", url: "https://taiasa.github.io/gamification_test1/rika_trial1", releaseDate: "2025-12-01" },
+        { id: 14, title: "ピタッと年号", subject: "社会", target: "歴史、年号、暗記", description: "時代ごとに作り込んだらもっとよくなりそう。", icon: "fa-landmark", color: "orange", url: "https://taiasa.github.io/gamification_test1/pita_nengo", releaseDate: "2025-12-01" },
+        { id: 15, title: "ボンバークイズ", subject: "算数", target: "複数人、４択", description: "ランダムなトーナメント戦を即時に生成。使い方は無限大！", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/bomber_quiz", releaseDate: "2025-12-01" },
+        { id: 16, title: "計算ヘビゲーム", subject: "算数", target: "四則計算", description: "昔懐かしヘビゲームと四則計算の融合", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/hebi_game", releaseDate: "2025-12-01" },
+        { id: 17, title: "約分ゲーム", subject: "算数", target: "約分、公約数", description: "テンポよく公約数を見つけて約分しよう", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/yakubun", releaseDate: "2025-12-01" },
+        { id: 18, title: "約数もぐらたたき", subject: "算数", target: "約数", description: "恨みいっぱいの約数をたたきのめそう！", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/yakusu_tataki", releaseDate: "2025-12-01" },
+        { id: 19, title: "計算爆弾ゲーム", subject: "算数", target: "複数人、四則計算", description: "ドキドキしたら計算できない！己の限界を超えて計算せよ", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/boom_pass", releaseDate: "2025-12-01" },
+        { id: 20, title: "面積の魔法使い", subject: "算数", target: "面積、図形", description: "マス目を使って公式を頭に叩き込め", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/menseki_sakuzu", releaseDate: "2025-12-01" },
+        { id: 21, title: "超速計算〇×ゲーム", subject: "算数", target: "四則計算", description: "計算感覚を養え。君は超速に耐えられるか…", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/speedgrader_cal", releaseDate: "2025-12-01" },
+        { id: 22, title: "計算神経衰弱", subject: "算数", target: "四則計算", description: "神経衰弱をしながら計算を楽しもう", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/keisan_memory_card", releaseDate: "2025-12-01" },
+        { id: 23, title: "ネオンジャンプ", subject: "算数", target: "小数の計算", description: "シンプルな世界で飛び跳ねながら小数に親しもう", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/neon_jump", releaseDate: "2025-12-01" },
+        { id: 24, title: "たし算ゲーム", subject: "算数", target: "低学年向け、たし算", description: "かわいいキャラとたし算しよう", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/1nen_tashizan", releaseDate: "2025-12-01" },
+        { id: 25, title: "たして１０！", subject: "算数", target: "低学年向け、たし算", description: "さくらんぼの入り口。１０になる数を見つけよう", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/tashite10", releaseDate: "2025-12-01" },
+        { id: 26, title: "世界遺産オセロ", subject: "社会", target: "１人、対戦、世界遺産", description: "普通に難しい。知らないことが多い", icon: "fa-landmark", color: "orange", url: "https://taiasa.github.io/gamification_test1/reversi", releaseDate: "2025-12-01" },
+        { id: 27, title: "すごろく DE 理科", subject: "理科", target: "１人、複数人、理科", description: "色々なジャンルを網羅したすごろくゲーム。", icon: "fa-star", color: "indigo", url: "https://taiasa.github.io/gamification_test1/sugoroku_de_rika", releaseDate: "2025-12-01" },
+        { id: 28, title: "すごろく DE English", subject: "英語", target: "１人、複数人、クイズ", description: "なんとなくほのぼのすごろく。表示はすべて英語です", icon: "fa-comment", color: "pink", url: "https://taiasa.github.io/gamification_test1/sugoroku_de_english", releaseDate: "2025-12-01" },
+        { id: 29, title: "ブロック崩し面積編", subject: "算数", target: "面積、暗算", description: "動きは滑らかになった…。あとは面積の公式だ…", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/block_kuzushi_menseki2", releaseDate: "2025-12-01" },
+        { id: 30, title: "部首ライダー", subject: "国語", target: "部首、つくり、漢字", description: "爽快感いっぱいに倒した敵の数に応じて問題を解こう！", icon: "fa-pen-nib", color: "blue", url: "https://taiasa.github.io/gamification_test1/busyu_raider", releaseDate: "2025-12-01" },
+        { id: 31, title: "ナンバーチェイン", subject: "算数", target: "四則計算、約数", description: "頭も指先も全集中！君はボス戦のプレッシャーを超えられるか…", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/number_chain", releaseDate: "2025-12-01" },
+        { id: 32, title: "ロイヤルコンシェルジュ", subject: "国語", target: "敬語、尊敬語、謙譲語、丁寧語", description: "日本語の妙技、敬語を身に付けよう！", icon: "fa-pen-nib", color: "blue", url: "https://taiasa.github.io/gamification_test1/concierge", releaseDate: "2025-12-01" },
+        { id: 33, title: "ENGLISH RUN", subject: "英語", target: "単語、穴埋め", description: "軽快にジャンプしながら、時々スーパーどすん！", icon: "fa-comment", color: "pink", url: "https://taiasa.github.io/gamification_test1/sky_high_english", releaseDate: "2025-12-01" },
+        { id: 34, title: "ネオンリンク", subject: "レク", target: "一筆書き、爽快感", description: "一筆書きで最高のそう快感を味わおう！", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/neon_link", releaseDate: "2025-12-01" },
+        { id: 35, title: "GALAXY GEM HUNTER", subject: "算数", target: "四則計算、文章題", description: "クリッカー×ガチャ×算数！これぞ最強の組み合わせゲーム！", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/click_gacha_math", releaseDate: "2025-12-01" },
+        { id: 36, title: "CHRONO COLLECTOR", subject: "社会", target: "歴史", description: "歴史パワーを持つ宝石を集めて、偉人アイテムをゲットしよう。鍵は歴史の知識！", icon: "fa-landmark", color: "orange", url: "https://taiasa.github.io/chrono_collector_by_build/", releaseDate: "2025-12-01" }, 
+        { id: 37, title: "心を一つに～マッチでゴー～", subject: "レク", target: "複数人、言葉合わせ、協力", description: "君たちの絆は本物か。心を一つに！", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/kokoro_hitotsu", releaseDate: "2025-12-01" },
+        { id: 38, title: "確率 DE ガチャ", subject: "算数", target: "確率", description: "ガチャゲーに人生を左右されないため…確率という概念を体感せよ", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/probability_gacha", releaseDate: "2025-12-01" },
+        { id: 39, title: "サイバーショートカット", subject: "チャレンジ", target: "ショートカット、情報系", description: "君はショートカットをどこまで使いこなせているかのか！？", icon: "fa-thumbs-up", color: "rose", url: "https://taiasa.github.io/gamification_test1/cyber_shortcut", releaseDate: "2025-12-01" },
+        { id: 40, title: "じゃんけんの沼", subject: "算数", target: "確率、じゃんけん", description: "運を捨てろ。確率を支配せよ。", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/janken", releaseDate: "2025-12-01" },
+        { id: 41, title: "九九マスター", subject: "算数", target: "九九", description: "スピーディな九九体験", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/kuku", releaseDate: "2025-12-01" },
+        { id: 42, title: "インド式計算マスターへの道", subject: "チャレンジ", target: "インド式、かけ算、暗算", description: "解き明かせ、計算のパズル", icon: "fa-thumbs-up", color: "rose", url: "https://taiasa.github.io/gamification_test1/indoshiki", releaseDate: "2025-12-01" },
+        { id: 43, title: "日本１００名城", subject: "社会", target: "歴史、城", description: "君はいくつの名城を知っているか。", icon: "fa-landmark", color: "orange", url: "https://taiasa.github.io/gamification_test1/100meijou", releaseDate: "2025-12-01" },
+        { id: 44, title: "エレメントクエスト", subject: "理科", target: "元素、原子番号、元素記号", description: "元素記号と元素周期表の位置だけでも覚えちゃえ", icon: "fa-star", color: "indigo", url: "https://taiasa.github.io/gamification_test1/element", releaseDate: "2025-12-01" },
+        { id: 45, title: "掃除当番表作成アプリ", subject: "ツール系", target: "掃除当番", description: "とりあえずで作っておいて、最後は必ず人の手で…", icon: "fa-chalkboard-user", color: "gray", url: "https://taiasa.github.io/gamification_test1/broom", releaseDate: "2025-12-01" },
+        { id: 46, title: "イマコレタイマー（時間版）", subject: "ツール系", target: "タイマー、可視化", description: "残り何分、何をすべきかが一目でわかる便利ツール", icon: "fa-chalkboard-user", color: "gray", url: "https://taiasa.github.io/gamification_test1/imakore_timer", releaseDate: "2025-12-01" },
+        { id: 47, title: "ハイパービンゴ", subject: "レク", target: "ビンゴ", description: "普通のビンゴとレクビンゴあり", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/bingo", releaseDate: "2026-01-01" },
+        { id: 48, title: "歴トレ", subject: "社会", target: "歴史、時代、年号、元号", description: "時代、元号、年号のセンスを磨け！", icon: "fa-landmark", color: "orange", url: "https://taiasa.github.io/gamification_test1/rekitore", releaseDate: "2026-01-01" },
+        { id: 49, title: "憲法マスター", subject: "社会", target: "憲法、条文暗記、タイピング", description: "タイピングしながら憲法も覚えられる画期的アプリ", icon: "fa-landmark", color: "orange", url: "https://taiasa.github.io/gamification_test1/kenpou_master", releaseDate: "2026-01-01" },
+        { id: 50, title: "イマコレタイマー2（時刻版）", subject: "ツール系", target: "タイマー、時計、可視化", description: "今の時間、次の時間に何をすべきかが一目でわかる便利ツール。あの人気アプリの第二弾！", icon: "fa-chalkboard-user", color: "gray", url: "https://taiasa.github.io/gamification_test1/imakore_timer2", releaseDate: "2026-01-01" },
+        { id: 51, title: "ネオンイングリッシュ", subject: "英語", target: "英単語、名詞", description: "英語を使って、ネオンの世界をかけぬけろ！", icon: "fa-comment", color: "pink", url: "https://taiasa.github.io/gamification_test1/neon_english", releaseDate: "2026-01-01" },
+        { id: 52, title: "漢字の極み", subject: "国語", target: "漢字、書きとり", description: "極めろ、漢字の形を…", icon: "fa-pen-nib", color: "blue", url: "https://taiasa.github.io/gamification_test1/kanji_kiwami", releaseDate: "2026-01-01" },
+		{ id: 53, title: "ラウンドマスター", subject: "算数", target: "四捨五入、概数", description: "四捨五入を思いのままに使いこなせ", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/round_master", releaseDate: "2026-01-01" },
+		{ id: 54, title: "わり算筆算道場", subject: "算数", target: "わり算、筆算、あまり", description: "合言葉は「立てる」「かける」「ひく」「おろす」！", icon: "fa-calculator", color: "emerald", url: "https://taiasa.github.io/gamification_test1/warizan_hissan", releaseDate: "2026-01-01" },
+		{ id: 55, title: "DoodleFlow -文学暗記の最終兵器-", subject: "国語", target: "現代文、古文、暗記", description: "本当かウソか、とにかく手を動かし続けて暗記しよう！", icon: "fa-pen-nib", color: "blue", url: "https://taiasa.github.io/gamification_test1/DoodleFlow", releaseDate: "2026-01-01" },
+		{ id: 56, title: "コトバの箱庭", subject: "チャレンジ", target: "日記、言葉、タイピング", description: "タイピングは目的じゃない。思考を表現するツールだ！", icon: "fa-thumbs-up", color: "rose", url: "https://taiasa.github.io/gamification_test1/kotoba_hakoniwa", releaseDate: "2026-01-01" },
+		{ id: 57, title: "ピカッとポチッと", subject: "レク", target: "複数人、タイピング", description: "息を合わせてピカッとポチッとできたら高得点", icon: "fa-chess-knight", color: "violet", url: "https://taiasa.github.io/gamification_test1/pikapochi", releaseDate: "2026-01-01" }
     ];
 
     const subjectStyles = {
@@ -292,16 +388,25 @@
     }
 
     // ==========================================
-    //  お気に入り機能の実装
+    //  NEW判定ロジック (改良版)
     // ==========================================
-    
-    // LocalStorageからお気に入りIDの配列を取得
+    function isNewGame(releaseDateStr) {
+        if (!releaseDateStr) return false;
+        const releaseDate = new Date(releaseDateStr);
+        const now = new Date();
+        const diffTime = Math.abs(now - releaseDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays <= 30; // 30日以内ならNEW
+    }
+
+    // ==========================================
+    //  お気に入り機能
+    // ==========================================
     function getFavorites() {
         const stored = localStorage.getItem('eduGameFavorites');
         return stored ? JSON.parse(stored) : [];
     }
 
-    // お気に入りの切り替え処理
     function toggleFavorite(id) {
         let favs = getFavorites();
         if (favs.includes(id)) {
@@ -311,15 +416,10 @@
         }
         localStorage.setItem('eduGameFavorites', JSON.stringify(favs));
         
-        // 【修正1】現在のフィルター状態を維持したまま再描画
         const activeBtn = document.querySelector('.filter-btn.tag-active');
         let currentFilter = 'all';
-        
         if (activeBtn) {
-            // ボタンのテキストから余計な空白を削除
             const btnText = activeBtn.innerText.replace(/\s+/g, '');
-            
-            // ★ここがバグ修正ポイント：「ALL」なら小文字の「all」にする
             if (btnText === 'ALL') {
                 currentFilter = 'all';
             } else if (btnText.includes('お気に入り')) {
@@ -328,9 +428,56 @@
                 currentFilter = activeBtn.innerText;
             }
         }
-        
         const keyword = document.getElementById('searchInput').value;
         renderGames(currentFilter, keyword);
+    }
+
+    // ==========================================
+    //  検索・フィルタリング・リセット機能
+    // ==========================================
+
+    // 改良: ALLボタンクリック時の全リセット関数
+    function resetAll() {
+        clearSearch(); // 検索窓クリア
+        filterContent('all'); // フィルタをALLに
+    }
+
+    function setSearchKeyword(keyword) {
+        document.getElementById('searchInput').value = keyword;
+        updateClearButton(keyword);
+        
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('tag-active'));
+        document.querySelector('button[onclick="resetAll()"]').classList.add('tag-active');
+        
+        renderGames('all', keyword);
+        document.getElementById('searchInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function clearSearch() {
+        const input = document.getElementById('searchInput');
+        input.value = '';
+        updateClearButton('');
+        
+        // アクティブなフィルタ状態を維持（ALLボタンが押されたわけではないため）
+        const activeBtn = document.querySelector('.filter-btn.tag-active');
+        let currentFilter = 'all';
+        if(activeBtn) {
+            const btnText = activeBtn.innerText.replace(/\s+/g, '');
+            if (btnText === 'ALL') currentFilter = 'all';
+            else if (btnText.includes('お気に入り')) currentFilter = 'favorites';
+            else currentFilter = activeBtn.innerText;
+        }
+        renderGames(currentFilter, '');
+        input.focus();
+    }
+
+    function updateClearButton(val) {
+        const btn = document.getElementById('clearSearchBtn');
+        if(val.length > 0) {
+            btn.classList.remove('hidden');
+        } else {
+            btn.classList.add('hidden');
+        }
     }
 
     function renderGames(filter = 'all', keyword = '') {
@@ -339,13 +486,11 @@
         grid.innerHTML = '';
         
         const favoriteIds = getFavorites();
-
-        // IDが大きい順にソート (降順)
         const sortedGames = [...games].sort((a, b) => b.id - a.id);
+        const keywords = keyword.toLowerCase().split(/[\s\u3000]+/).filter(k => k);
 
         const filteredGames = sortedGames.filter(game => {
             let matchesSubject = false;
-            // フィルター条件判定
             if (filter === 'all') {
                 matchesSubject = true;
             } else if (filter === 'favorites') {
@@ -354,8 +499,9 @@
                 matchesSubject = game.subject === filter;
             }
 
-            const matchesKeyword = game.title.toLowerCase().includes(keyword.toLowerCase()) || 
-                                 game.description.toLowerCase().includes(keyword.toLowerCase());
+            const gameText = (game.title + game.description + game.target + game.subject).toLowerCase();
+            const matchesKeyword = keywords.every(k => gameText.includes(k));
+
             return matchesSubject && matchesKeyword;
         });
 
@@ -366,35 +512,34 @@
             
             filteredGames.forEach(game => {
                 const style = getSubjectStyle(game.subject);
-                const isNew = game.id > 48;
+                // 改良: ID依存ではなく日付依存のロジックを使用
+                const isNew = isNewGame(game.releaseDate);
                 const isFav = favoriteIds.includes(game.id);
-                // ハートアイコンの状態切り替え
                 const heartIconClass = isFav ? "fas fa-heart text-pink-500" : "far fa-heart text-slate-300";
 
                 const card = document.createElement('div');
                 card.className = 'game-card rounded-3xl p-6 flex flex-col relative group h-full';
                 
-                // 【修正2】HTML構造を変更してハートとタグが重ならないように修正
+                const tagsHtml = game.target.split('、').map(tag => 
+                    `<button onclick="setSearchKeyword('${tag}')" class="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-500 font-medium hover:bg-slate-200 hover:text-blue-600 transition-colors cursor-pointer">#${tag}</button>`
+                ).join('');
+
                 card.innerHTML = `
                     ${isNew ? '<div class="absolute -top-3 -right-3 badge-new bg-red-500 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-lg border border-white z-10">NEW</div>' : ''}
                     
                     <div class="flex justify-between items-start mb-6">
-                        <!-- アイコン（左側） -->
                         <div class="card-icon-wrapper w-14 h-14 rounded-2xl bg-gradient-to-br ${style.from} ${style.to} text-white flex items-center justify-center shadow-lg shadow-gray-200">
                             <i class="fas ${game.icon} text-2xl"></i>
                         </div>
                         
-                        <!-- 右側のグループ（ハートボタン + タグ） -->
                         <div class="flex items-center gap-2">
-                            <!-- ハートボタン（absoluteを削除し、タグの左側に配置） -->
-                            <button onclick="toggleFavorite(${game.id})" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-pink-50 flex items-center justify-center transition-all hover:scale-110 active:scale-95 group/heart" title="お気に入りに追加">
+                            <button onclick="toggleFavorite(${game.id})" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-pink-50 flex items-center justify-center transition-all hover:scale-110 active:scale-95 group/heart" aria-label="お気に入りに追加">
                                 <i class="${heartIconClass} text-lg group-hover/heart:text-pink-500 transition-colors"></i>
                             </button>
 
-                            <!-- 教科タグ -->
-                            <span class="px-3 py-1 rounded-full text-[10px] font-bold ${style.bg} ${style.text} border ${style.border}">
+                            <button onclick="filterContent('${game.subject}')" class="px-3 py-1 rounded-full text-[10px] font-bold ${style.bg} ${style.text} border ${style.border} hover:opacity-80 transition-opacity">
                                 ${game.subject}
-                            </span>
+                            </button>
                         </div>
                     </div>
                     
@@ -403,9 +548,7 @@
                     </div>
 
                     <div class="flex flex-wrap gap-2 mb-4">
-                        ${game.target.split('、').map(tag => 
-                            `<span class="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-500 font-medium">#${tag}</span>`
-                        ).join('')}
+                        ${tagsHtml}
                     </div>
                     
                     <p class="text-slate-500 text-sm leading-relaxed mb-8 flex-grow font-medium">${game.description}</p>
@@ -423,13 +566,13 @@
     function filterContent(subject) {
         document.querySelectorAll('.filter-btn').forEach(btn => {
             let btnText = btn.innerText.replace(/\s+/g, '');
-            // 「ALL」と「お気に入り」の特別判定
             const isAll = subject === 'all' && btnText === 'ALL';
             const isFav = subject === 'favorites' && btnText.includes('お気に入り');
             const isMatch = btn.innerText === subject;
             
             if(isAll || isFav || isMatch) {
                 btn.classList.add('tag-active');
+                btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             } else {
                 btn.classList.remove('tag-active');
             }
@@ -440,6 +583,7 @@
     }
 
     document.getElementById('searchInput').addEventListener('input', (e) => {
+        updateClearButton(e.target.value);
         const activeFilterBtn = document.querySelector('.filter-btn.tag-active');
         let subject = 'all';
         if (activeFilterBtn) {
@@ -455,13 +599,18 @@
         renderGames(subject, e.target.value);
     });
 
-    window.onload = () => renderGames();
+    window.addEventListener('scroll', () => {
+        const btn = document.getElementById('backToTop');
+        if (window.scrollY > 300) {
+            btn.classList.add('visible');
+        } else {
+            btn.classList.remove('visible');
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderGames();
+    });
     </script>
 </body>
 </html>
-
-
-
-
-
-
